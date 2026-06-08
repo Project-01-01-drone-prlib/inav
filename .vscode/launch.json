@@ -1,0 +1,34 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "BETAFPVF405 Flash + Debug (J-Link)",
+            "type": "cortex-debug",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "executable": "${workspaceFolder}/build/bin/BETAFPVF405.elf",
+            "preLaunchTask": "Build BETAFPVF405 debug",
+
+            "servertype": "jlink",
+            "serverpath": "C:\\Program Files\\SEGGER\\JLink\\JLinkGDBServerCL.exe",
+            "device": "STM32F405RG",
+            "interface": "swd",
+            "runToEntryPoint": "main",
+            "armToolchainPath": "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\10 2021.10\\bin",
+            "armToolchainPrefix": "arm-none-eabi",
+            "gdbPath": "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\10 2021.10\\bin\\arm-none-eabi-gdb.exe",
+            "showDevDebugOutput": "raw",
+            "env": {
+                "RTT_EXEC_PATH": "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\10 2021.10\\bin",
+                "PATH": "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\10 2021.10\\bin;${env:PATH}"
+            },
+
+            "preLaunchCommands": [
+                "set pagination off",
+                "set print pretty on",
+                "set mem inaccessible-by-default off",
+                "set breakpoint pending on"
+            ]
+        }
+    ]
+}

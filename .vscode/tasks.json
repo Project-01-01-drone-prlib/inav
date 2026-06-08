@@ -30,7 +30,31 @@
         {
             "label": "CMAKE Update",
             "type": "shell",
-            "command": "cmake ..",
+            "command": "cmake -G Ninja .. -DVERSION_TYPE=DEV",
+            "group": "build",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            }
+        },
+        {
+            "label": "CMAKE Update Debug",
+            "type": "shell",
+            "command": "cmake -G Ninja .. -DCMAKE_BUILD_TYPE=Debug -DVERSION_TYPE=DEV",
+            "group": "build",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            }
+        },
+        {
+            "label": "Build BETAFPVF405 debug",
+            "type": "shell",
+            "command": "cmake --build . --target BETAFPVF405 --config Debug",
+            "dependsOn": [
+                "CMAKE Update Debug"
+            ],
+            "dependsOrder": "sequence",
             "group": "build",
             "problemMatcher": [],
             "options": {
