@@ -35,25 +35,25 @@
 #define USE_EXTI
 
 #define USE_IMU_MPU6000
-#define IMU_MPU6000_ALIGN       CW270_DEG
+#define IMU_MPU6000_ALIGN       CW270_DEG_FLIP
 #define MPU6000_SPI_BUS         BUS_SPI1
 #define MPU6000_CS_PIN          PA4
 #define MPU6000_EXTI_PIN        PC4
 
 #define USE_IMU_ICM42605
-#define IMU_ICM42605_ALIGN      CW270_DEG
+#define IMU_ICM42605_ALIGN      CW270_DEG_FLIP
 #define ICM42605_SPI_BUS        BUS_SPI1
 #define ICM42605_CS_PIN         PA4
 #define ICM42605_EXTI_PIN       PC4
 
 #define USE_IMU_ICM42688P
-#define IMU_ICM42688P_ALIGN     CW270_DEG
+#define IMU_ICM42688P_ALIGN     CW270_DEG_FLIP
 #define ICM42688P_SPI_BUS       BUS_SPI1
 #define ICM42688P_CS_PIN        PA4
 #define ICM42688P_EXTI_PIN      PC4
 
 #define USE_IMU_BMI270
-#define IMU_BMI270_ALIGN        CW270_DEG
+#define IMU_BMI270_ALIGN        CW270_DEG_FLIP
 #define BMI270_SPI_BUS          BUS_SPI1
 #define BMI270_CS_PIN           PA4
 #define BMI270_EXTI_PIN         PC4
