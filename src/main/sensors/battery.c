@@ -297,11 +297,13 @@ static void updateBatteryVoltage(timeUs_t timeDelta, bool justConnected)
 
 #if defined(USE_SMARTPORT_MASTER)
     case VOLTAGE_SENSOR_SMARTPORT:
-        int16_t * smartportVoltageData = smartportMasterGetVoltageData();
-        if (smartportVoltageData) {
-            vbat = *smartportVoltageData;
-        } else {
-            vbat = 0;
+        {
+            int16_t * smartportVoltageData = smartportMasterGetVoltageData();
+            if (smartportVoltageData) {
+                vbat = *smartportVoltageData;
+            } else {
+                vbat = 0;
+            }
         }
         break;
 #endif
@@ -616,11 +618,13 @@ void currentMeterUpdate(timeUs_t timeDelta)
 #endif
 #if defined(USE_SMARTPORT_MASTER)
         case CURRENT_SENSOR_SMARTPORT:
-            int16_t * smartportCurrentData = smartportMasterGetCurrentData();
-            if (smartportCurrentData) {
-                amperage = *smartportCurrentData;
-            } else {
-                amperage = 0;
+            {
+                int16_t * smartportCurrentData = smartportMasterGetCurrentData();
+                if (smartportCurrentData) {
+                    amperage = *smartportCurrentData;
+                } else {
+                    amperage = 0;
+                }
             }
             break;
 #endif
