@@ -122,12 +122,25 @@ static void updateAltitudeThrottleController_MC(timeDelta_t deltaMicros)
 bool adjustMulticopterAltitudeFromRCInput(void)
 {
     if (posControl.flags.isTerrainFollowEnabled) {
-        const int16_t altTarget = scaleRange(rcCommand[THROTTLE], getThrottleIdleValue(), getMaxThrottle(), 0, navConfig()->general.max_terrain_follow_altitude);
+        if (posControl.flags.estAglStatus == EST_TRUSTED) {
+            const uint8_t deadband = rcControlsConfig()->alt_hold_deadband;
+            const int16_t rcThrottleAdjustment = applyDeadband(rcCommand[THROTTLE] - altHoldThrottleRCZero, deadband);
 
-        // In terrain follow mode we apply different logic for terrain control
-        if (posControl.flags.estAglStatus == EST_TRUSTED && altTarget > 10) {
-            // We have solid terrain sensor signal - directly map throttle to altitude
-            updateClimbRateToAltitudeController(0, altTarget, ROC_TO_ALT_TARGET);
+            if (rcThrottleAdjustment) {
+                int16_t controlRange = -deadband;
+                controlRange += rcThrottleAdjustment > 0 ? getMaxThrottle() - altHoldThrottleRCZero : altHoldThrottleRCZero - getThrottleIdleValue();
+
+                const int16_t rcClimbRate = rcThrottleAdjustment * navConfig()->mc.max_manual_climb_rate / controlRange;
+                updateClimbRateToAltitudeController(rcClimbRate, 0, ROC_TO_ALT_CONSTANT);
+
+                return true;
+            } else {
+                if (posControl.flags.isAdjustingAltitude) {
+                    updateClimbRateToAltitudeController(0, 0, ROC_TO_ALT_CURRENT);
+                }
+
+                return false;
+            }
         }
         else {
             int16_t climbRate = -50;
@@ -140,10 +153,9 @@ bool adjustMulticopterAltitudeFromRCInput(void)
             }
 
             updateClimbRateToAltitudeController(climbRate, 0, ROC_TO_ALT_CONSTANT);
-        }
 
-        // In surface tracking we always indicate that we're adjusting altitude
-        return true;
+            return true;
+        }
     }
     else {
         const uint8_t deadband = rcControlsConfig()->alt_hold_deadband;

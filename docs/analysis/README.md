@@ -5,3 +5,4 @@
 当前文档：
 
 - [光流定点下油门与高度行为分析](optflow-poshold-throttle-altitude.md)
+- [光流定点切入后 SURFACE 掉高分析](optflow-poshold-surface-drop-analysis.md)
