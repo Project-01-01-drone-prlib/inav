@@ -13,7 +13,7 @@
             "serverpath": "C:\\Program Files\\SEGGER\\JLink\\JLinkGDBServerCL.exe",
             "device": "STM32F405RG",
             "interface": "swd",
-            "runToEntryPoint": "main",
+            // "runToEntryPoint": "main",
             "armToolchainPath": "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\10 2021.10\\bin",
             "armToolchainPrefix": "arm-none-eabi",
             "gdbPath": "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\10 2021.10\\bin\\arm-none-eabi-gdb.exe",

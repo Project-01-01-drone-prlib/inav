@@ -63,6 +63,26 @@ static int16_t altHoldThrottleRCZero = 1500;
 static pt1Filter_t altholdThrottleFilterState;
 static bool prepareForTakeoffOnReset = false;
 static sqrt_controller_t alt_hold_sqrt_controller;
+static int16_t altHoldDebugRcCommand;
+static int16_t altHoldDebugRcZero;
+static int16_t altHoldDebugDeadband;
+static int16_t altHoldDebugAdjustment;
+
+static void updateAltHoldRcDebug(int16_t rcThrottleCommand, int16_t deadband, int16_t rcThrottleAdjustment)
+{
+    altHoldDebugRcCommand = rcThrottleCommand;
+    altHoldDebugRcZero = altHoldThrottleRCZero;
+    altHoldDebugDeadband = deadband;
+    altHoldDebugAdjustment = rcThrottleAdjustment;
+}
+
+static void publishAltHoldRcDebug(void)
+{
+    DEBUG_SET(DEBUG_ALTITUDE, 4, altHoldDebugRcCommand);
+    DEBUG_SET(DEBUG_ALTITUDE, 5, altHoldDebugRcZero);
+    DEBUG_SET(DEBUG_ALTITUDE, 6, altHoldDebugDeadband);
+    DEBUG_SET(DEBUG_ALTITUDE, 7, altHoldDebugAdjustment);
+}
 
 float getSqrtControllerVelocity(float targetAltitude, timeDelta_t deltaMicros)
 {
@@ -125,6 +145,7 @@ bool adjustMulticopterAltitudeFromRCInput(void)
         if (posControl.flags.estAglStatus == EST_TRUSTED) {
             const uint8_t deadband = rcControlsConfig()->alt_hold_deadband;
             const int16_t rcThrottleAdjustment = applyDeadband(rcCommand[THROTTLE] - altHoldThrottleRCZero, deadband);
+            updateAltHoldRcDebug(rcCommand[THROTTLE], deadband, rcThrottleAdjustment);
 
             if (rcThrottleAdjustment) {
                 int16_t controlRange = -deadband;
@@ -160,6 +181,7 @@ bool adjustMulticopterAltitudeFromRCInput(void)
     else {
         const uint8_t deadband = rcControlsConfig()->alt_hold_deadband;
         const int16_t rcThrottleAdjustment = applyDeadband(rcCommand[THROTTLE] - altHoldThrottleRCZero, deadband);
+        updateAltHoldRcDebug(rcCommand[THROTTLE], deadband, rcThrottleAdjustment);
 
         if (rcThrottleAdjustment) {
             /* Set velocity proportional to stick movement
@@ -287,6 +309,8 @@ static void applyMulticopterAltitudeController(timeUs_t currentTimeUs)
 
     // Save processed throttle for future use
     rcCommandAdjustedThrottle = rcCommand[THROTTLE];
+
+    publishAltHoldRcDebug();
 }
 
 /*-----------------------------------------------------------

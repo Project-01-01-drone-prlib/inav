@@ -80,6 +80,8 @@ void updatePositionEstimator_SurfaceTopic(timeUs_t currentTimeUs, float newSurfa
 void estimationCalculateAGL(estimationContext_t * ctx)
 {
 #if defined(USE_RANGEFINDER) && defined(USE_BARO)
+    float aglResidualDebug = 0.0f;
+
     if ((ctx->newFlags & EST_SURFACE_VALID) && (ctx->newFlags & EST_BARO_VALID)) {
         navAGLEstimateQuality_e newAglQuality = posEstimator.est.aglQual;
         bool resetSurfaceEstimate = false;
@@ -178,10 +180,16 @@ void estimationCalculateAGL(estimationContext_t * ctx)
         posEstimator.est.aglQual = SURFACE_QUAL_LOW;
     }
 
+    aglResidualDebug = posEstimator.surface.alt - posEstimator.est.aglAlt;
+
     DEBUG_SET(DEBUG_AGL, 0, posEstimator.surface.reliability * 1000);
     DEBUG_SET(DEBUG_AGL, 1, posEstimator.est.aglQual);
     DEBUG_SET(DEBUG_AGL, 2, posEstimator.est.aglAlt);
     DEBUG_SET(DEBUG_AGL, 3, posEstimator.est.aglVel);
+    DEBUG_SET(DEBUG_AGL, 4, posEstimator.surface.alt);
+    DEBUG_SET(DEBUG_AGL, 5, aglResidualDebug);
+    DEBUG_SET(DEBUG_AGL, 6, posEstimator.est.vel.z);
+    DEBUG_SET(DEBUG_AGL, 7, posEstimator.imu.accelNEU.z);
 
 #else
     UNUSED(ctx);
