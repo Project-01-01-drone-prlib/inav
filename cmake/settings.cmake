@@ -37,13 +37,31 @@ function(enable_settings exe name)
     if(host STREQUAL TOOLCHAIN)
         set(USE_HOST_GCC "-g")
     endif()
+    set(settings_cxx ${args_SETTINGS_CXX})
+    if(CMAKE_HOST_WIN32 AND NOT settings_cxx)
+        set(settings_cxx ${CMAKE_CXX_COMPILER})
+    endif()
     set(output ${dir}/${SETTINGS_GENERATED_H} ${dir}/${SETTINGS_GENERATED_C})
-    add_custom_command(
-        OUTPUT ${output}
-        COMMAND
-            ${CMAKE_COMMAND} -E env CFLAGS="${cflags}" TARGET=${name} SETTINGS_CXX=${args_SETTINGS_CXX}
-            ${RUBY_EXECUTABLE} ${SETTINGS_GENERATOR} ${MAIN_DIR} ${SETTINGS_FILE} -o "${dir}" ${USE_HOST_GCC} 
-        DEPENDS ${SETTINGS_GENERATOR} ${SETTINGS_FILE}
-    )
+    if(CMAKE_HOST_WIN32)
+        file(MAKE_DIRECTORY "${dir}")
+        list(JOIN cflags " " cflags_string)
+        set(cflags_file "${dir}/settings_cflags.txt")
+        file(WRITE "${cflags_file}" "${cflags_string}")
+        add_custom_command(
+            OUTPUT ${output}
+            COMMAND
+                ${CMAKE_COMMAND} -E env CFLAGS_FILE="${cflags_file}" TARGET=${name} PATH="$ENV{PATH}" SETTINGS_CXX=${settings_cxx}
+                ${RUBY_EXECUTABLE} ${SETTINGS_GENERATOR} ${MAIN_DIR} ${SETTINGS_FILE} -o "${dir}" ${USE_HOST_GCC}
+            DEPENDS ${SETTINGS_GENERATOR} ${SETTINGS_FILE} "${cflags_file}"
+        )
+    else()
+        add_custom_command(
+            OUTPUT ${output}
+            COMMAND
+                ${CMAKE_COMMAND} -E env CFLAGS="${cflags}" TARGET=${name} PATH="$ENV{PATH}" SETTINGS_CXX=${settings_cxx}
+                ${RUBY_EXECUTABLE} ${SETTINGS_GENERATOR} ${MAIN_DIR} ${SETTINGS_FILE} -o "${dir}" ${USE_HOST_GCC}
+            DEPENDS ${SETTINGS_GENERATOR} ${SETTINGS_FILE}
+        )
+    endif()
     set(${args_OUTPUTS} ${output} PARENT_SCOPE)
 endfunction()

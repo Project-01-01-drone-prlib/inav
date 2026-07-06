@@ -184,20 +184,33 @@ function(get_at32_flash_size out size)
     endif()
 endfunction()
 
+function(get_objcopy_path out)
+    if(IS_ABSOLUTE "${CMAKE_OBJCOPY}")
+        set(${out} "${CMAKE_OBJCOPY}" PARENT_SCOPE)
+    else()
+        get_filename_component(toolchain_bin "${CMAKE_C_COMPILER}" DIRECTORY)
+        set(${out} "${toolchain_bin}/${CMAKE_OBJCOPY}" PARENT_SCOPE)
+    endif()
+endfunction()
+
 function(add_hex_target name exe hex)
+    get_objcopy_path(objcopy)
     add_custom_target(${name} ALL
+        ${CMAKE_COMMAND} -E env PATH="$ENV{PATH}"
         # TODO: Overriding the start address with --set-start 0x08000000
         # seems to be required due to some incorrect assumptions about .hex
         # files in the configurator. Verify wether that's the case and fix
         # the bug in configurator or delete this comment.
-        ${CMAKE_OBJCOPY} -Oihex --set-start 0x08000000 $<TARGET_FILE:${exe}> ${hex}
+        ${objcopy} -Oihex --set-start 0x08000000 $<TARGET_FILE:${exe}> ${hex}
         BYPRODUCTS ${hex}
     )
 endfunction()
 
 function(add_bin_target name exe bin)
+    get_objcopy_path(objcopy)
     add_custom_target(${name}
-        ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE:${exe}> ${bin}
+        ${CMAKE_COMMAND} -E env PATH="$ENV{PATH}"
+        ${objcopy} -Obinary $<TARGET_FILE:${exe}> ${bin}
         BYPRODUCTS ${bin}
     )
 endfunction()

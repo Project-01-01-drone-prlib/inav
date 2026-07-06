@@ -36,7 +36,18 @@ class Compiler
         # on Windows if PATH contains spaces.
         #dirs = ((ENV["CPP_PATH"] || "") + File::PATH_SEPARATOR + (ENV["PATH"] || "")).split(File::PATH_SEPARATOR)
         dirs = ((ENV["CPP_PATH"] || "") + File::PATH_SEPARATOR + (ENV["PATH"] || "")).split(File::PATH_SEPARATOR)
+        cflags_file = ENV["CFLAGS_FILE"]
+        @cflags = if cflags_file && !cflags_file.empty? && File.file?(cflags_file)
+            File.read(cflags_file)
+        else
+            ENV["CFLAGS"] || ""
+        end
+
         bin = ENV["SETTINGS_CXX"]
+        if bin && !bin.empty? && File.executable?(bin)
+            @path = File.expand_path(bin)
+            return
+        end
         if bin.empty?
             if use_host_gcc
                 bin = "g++"
@@ -62,7 +73,7 @@ class Compiler
     end
 
     def default_args
-        cflags = Shellwords.split(ENV["CFLAGS"] || "")
+        cflags = Shellwords.split(@cflags)
         args = [@path]
         args << "-std=c++11"
         cflags.each do |flag|
