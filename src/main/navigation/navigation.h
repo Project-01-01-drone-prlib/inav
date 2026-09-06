@@ -286,6 +286,7 @@ typedef enum {
 typedef enum {
     NAV_EXTRA_ARMING_SAFETY_ON = 0,
     NAV_EXTRA_ARMING_SAFETY_ALLOW_BYPASS = 1, // Allow disabling by holding THR + YAW high
+    NAV_EXTRA_ARMING_SAFETY_OFF = 2,         // Allow GPS-denied arming for non-GPS navigation sensors
 } navExtraArmingSafety_e;
 
 typedef enum {

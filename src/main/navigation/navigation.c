@@ -4771,7 +4771,9 @@ navArmingBlocker_e navigationIsBlockingArming(bool *usedBypass)
     }
 
     // Apply extra arming safety only if pilot has any of GPS modes configured
-    if ((isUsingNavigationModes() || failsafeMayRequireNavigationMode()) && !navigationPositionEstimateIsHealthy()) {
+    if (navConfig()->general.flags.extra_arming_safety != NAV_EXTRA_ARMING_SAFETY_OFF &&
+        (isUsingNavigationModes() || failsafeMayRequireNavigationMode()) &&
+        !navigationPositionEstimateIsHealthy()) {
         if (navConfig()->general.flags.extra_arming_safety == NAV_EXTRA_ARMING_SAFETY_ALLOW_BYPASS &&
             (STATE(NAV_EXTRA_ARMING_SAFETY_BYPASSED) || checkStickPosition(YAW_HI))) {
             if (usedBypass) {

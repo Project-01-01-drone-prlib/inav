@@ -129,7 +129,9 @@ tables:
   - name: airmodeHandlingType
     values: ["STICK_CENTER", "THROTTLE_THRESHOLD", "STICK_CENTER_ONCE"]
   - name: nav_extra_arming_safety
-    values: ["ON", "ALLOW_BYPASS"]
+    # Keep ON=0 and ALLOW_BYPASS=1 for EEPROM compatibility. OFF is added
+    # as value 2 for GPS-denied indoor navigation using optical flow/rangefinder.
+    values: ["ON", "ALLOW_BYPASS", "OFF"]
     enum: navExtraArmingSafety_e
   - name: rssi_source
     values: ["NONE", "AUTO", "ADC", "CHANNEL", "PROTOCOL", "MSP"]
