@@ -395,6 +395,58 @@ static const blackboxDeltaFieldDefinition_t blackboxMainFields[] = {
     {"navAcc",     0, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(AVERAGE_2),     .Pencode = ENCODING(SIGNED_VB), FLIGHT_LOG_FIELD_CONDITION_NAV_ACC},
     {"navAcc",     1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(AVERAGE_2),     .Pencode = ENCODING(SIGNED_VB), FLIGHT_LOG_FIELD_CONDITION_NAV_ACC},
     {"navAcc",     2, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(AVERAGE_2),     .Pencode = ENCODING(SIGNED_VB), FLIGHT_LOG_FIELD_CONDITION_NAV_ACC},
+
+    /* Horizontal position-loop diagnostics.  Keep the prefix explicit so
+     * Blackbox viewers show these fields as controller diagnostics rather
+     * than as generic navigation/estimator values.
+     *
+     * navPosCtlEstPos[0..2]: estimated position in cm (X/Y/Z)
+     * navPosCtlEstVel[0..2]: estimated velocity in cm/s (X/Y/Z)
+     * navPosCtlEstAtt[0..2]: attitude in decidegrees (roll/pitch/yaw)
+     * navPosCtlTgtPos[0..2]: position-controller target in cm (X/Y/Z)
+     */
+    {"navPosCtlReq",       -1, UNSIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(UNSIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlRun",       -1, UNSIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(UNSIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlBypass",    -1, UNSIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(UNSIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlDataNew",   -1, UNSIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(UNSIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlDataUsed",  -1, UNSIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(UNSIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlAdjusting", -1, UNSIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(UNSIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlEstPosStatus", -1, UNSIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(UNSIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlEstVelStatus", -1, UNSIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(UNSIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlEstHdgStatus", -1, UNSIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(UNSIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+
+    {"navPosCtlEstPos",     0, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlEstPos",     1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlEstPos",     2, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+
+    {"navPosCtlEstVel",     0, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(AVERAGE_2), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlEstVel",     1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(AVERAGE_2), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlEstVel",     2, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(AVERAGE_2), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+
+    {"navPosCtlEstAtt",     0, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(AVERAGE_2), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlEstAtt",     1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(AVERAGE_2), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlEstAtt",     2, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(AVERAGE_2), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+
+    {"navPosCtlTgtPos",     0, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlTgtPos",     1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlTgtPos",     2, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+
+    {"navPosCtlDtMs",      -1, UNSIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(UNSIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+
+    {"navPosCtlPosErr",     0, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlPosErr",     1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+
+    {"navPosCtlTgtVel",     0, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(AVERAGE_2), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlTgtVel",     1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(AVERAGE_2), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+
+    {"navPosCtlVelErr",     0, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(AVERAGE_2), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlVelErr",     1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(AVERAGE_2), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+
+    {"navPosCtlAcc",        0, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(AVERAGE_2), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlAcc",        1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(AVERAGE_2), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+
+    {"navPosCtlAtt",        0, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(AVERAGE_2), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+    {"navPosCtlAtt",        1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(AVERAGE_2), .Pencode = ENCODING(TAG8_8SVB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
 };
 
 #ifdef USE_GPS
@@ -538,6 +590,25 @@ typedef struct blackboxMainState_s {
     int16_t navHeading;
     uint16_t navTargetHeading;
     int16_t navSurface;
+    uint8_t navPosCtlRequested;
+    uint8_t navPosCtlRun;
+    uint8_t navPosCtlBypass;
+    uint8_t navPosCtlDataNew;
+    uint8_t navPosCtlDataConsumed;
+    uint8_t navPosCtlAdjusting;
+    uint8_t navPosCtlEstPosStatus;
+    uint8_t navPosCtlEstVelStatus;
+    uint8_t navPosCtlEstHeadingStatus;
+    int32_t navPosCtlEstPosition[XYZ_AXIS_COUNT];
+    int32_t navPosCtlEstVelocity[XYZ_AXIS_COUNT];
+    int16_t navPosCtlEstAttitude[XYZ_AXIS_COUNT];
+    int32_t navPosCtlTargetPosition[XYZ_AXIS_COUNT];
+    uint16_t navPosCtlUpdateDt;
+    int32_t navPosCtlPosError[2];
+    int16_t navPosCtlTargetVelocity[2];
+    int16_t navPosCtlVelocityError[2];
+    int16_t navPosCtlAcceleration[2];
+    int16_t navPosCtlAttitude[2];
 } blackboxMainState_t;
 
 typedef struct blackboxGpsState_s {
@@ -1034,11 +1105,55 @@ static void writeIntraframe(void)
 
         blackboxWriteSignedVB(blackboxCurrent->navTargetHeading);
         blackboxWriteSignedVB(blackboxCurrent->navSurface);
+
     }
 
     if (testBlackboxCondition(FLIGHT_LOG_FIELD_CONDITION_NAV_ACC)) {
         for (int x = 0; x < XYZ_AXIS_COUNT; x++) {
             blackboxWriteSignedVB(blackboxCurrent->navAccNEU[x]);
+        }
+    }
+
+    /* Horizontal position-controller diagnostics.  Field order must match
+     * the navPosCtl* definitions above. */
+    if (testBlackboxCondition(FLIGHT_LOG_FIELD_CONDITION_NAV_POS)) {
+        blackboxWriteUnsignedVB(blackboxCurrent->navPosCtlRequested);
+        blackboxWriteUnsignedVB(blackboxCurrent->navPosCtlRun);
+        blackboxWriteUnsignedVB(blackboxCurrent->navPosCtlBypass);
+        blackboxWriteUnsignedVB(blackboxCurrent->navPosCtlDataNew);
+        blackboxWriteUnsignedVB(blackboxCurrent->navPosCtlDataConsumed);
+        blackboxWriteUnsignedVB(blackboxCurrent->navPosCtlAdjusting);
+        blackboxWriteUnsignedVB(blackboxCurrent->navPosCtlEstPosStatus);
+        blackboxWriteUnsignedVB(blackboxCurrent->navPosCtlEstVelStatus);
+        blackboxWriteUnsignedVB(blackboxCurrent->navPosCtlEstHeadingStatus);
+        for (int x = 0; x < XYZ_AXIS_COUNT; x++) {
+            blackboxWriteSignedVB(blackboxCurrent->navPosCtlEstPosition[x]);
+        }
+        for (int x = 0; x < XYZ_AXIS_COUNT; x++) {
+            blackboxWriteSignedVB(blackboxCurrent->navPosCtlEstVelocity[x]);
+        }
+        for (int x = 0; x < XYZ_AXIS_COUNT; x++) {
+            blackboxWriteSignedVB(blackboxCurrent->navPosCtlEstAttitude[x]);
+        }
+        for (int x = 0; x < XYZ_AXIS_COUNT; x++) {
+            blackboxWriteSignedVB(blackboxCurrent->navPosCtlTargetPosition[x]);
+        }
+        blackboxWriteUnsignedVB(blackboxCurrent->navPosCtlUpdateDt);
+
+        for (int x = 0; x < 2; x++) {
+            blackboxWriteSignedVB(blackboxCurrent->navPosCtlPosError[x]);
+        }
+        for (int x = 0; x < 2; x++) {
+            blackboxWriteSignedVB(blackboxCurrent->navPosCtlTargetVelocity[x]);
+        }
+        for (int x = 0; x < 2; x++) {
+            blackboxWriteSignedVB(blackboxCurrent->navPosCtlVelocityError[x]);
+        }
+        for (int x = 0; x < 2; x++) {
+            blackboxWriteSignedVB(blackboxCurrent->navPosCtlAcceleration[x]);
+        }
+        for (int x = 0; x < 2; x++) {
+            blackboxWriteSignedVB(blackboxCurrent->navPosCtlAttitude[x]);
         }
     }
 
@@ -1747,6 +1862,29 @@ static void loadMainState(timeUs_t currentTimeUs)
     }
     blackboxCurrent->navTargetHeading = navDesiredHeading;
     blackboxCurrent->navSurface = navActualSurface;
+    blackboxCurrent->navPosCtlRequested = navPosCtlRequested;
+    blackboxCurrent->navPosCtlRun = navPosCtlRun;
+    blackboxCurrent->navPosCtlBypass = navPosCtlBypass;
+    blackboxCurrent->navPosCtlDataNew = navPosCtlDataNew;
+    blackboxCurrent->navPosCtlDataConsumed = navPosCtlDataConsumed;
+    blackboxCurrent->navPosCtlAdjusting = navPosCtlAdjusting;
+    blackboxCurrent->navPosCtlEstPosStatus = navPosCtlEstPosStatus;
+    blackboxCurrent->navPosCtlEstVelStatus = navPosCtlEstVelStatus;
+    blackboxCurrent->navPosCtlEstHeadingStatus = navPosCtlEstHeadingStatus;
+    for (int i = 0; i < XYZ_AXIS_COUNT; i++) {
+        blackboxCurrent->navPosCtlEstPosition[i] = navPosCtlEstPosition[i];
+        blackboxCurrent->navPosCtlEstVelocity[i] = navPosCtlEstVelocity[i];
+        blackboxCurrent->navPosCtlEstAttitude[i] = navPosCtlEstAttitude[i];
+        blackboxCurrent->navPosCtlTargetPosition[i] = navPosCtlTargetPosition[i];
+    }
+    blackboxCurrent->navPosCtlUpdateDt = navPosCtlUpdateDt;
+    for (int i = 0; i < 2; i++) {
+        blackboxCurrent->navPosCtlPosError[i] = navPosCtlPosError[i];
+        blackboxCurrent->navPosCtlTargetVelocity[i] = navPosCtlTargetVelocity[i];
+        blackboxCurrent->navPosCtlVelocityError[i] = navPosCtlVelocityError[i];
+        blackboxCurrent->navPosCtlAcceleration[i] = navPosCtlAcceleration[i];
+        blackboxCurrent->navPosCtlAttitude[i] = navPosCtlAttitude[i];
+    }
 }
 
 /**

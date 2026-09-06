@@ -843,3 +843,26 @@ extern uint16_t navFlags;
 extern uint16_t navEPH;
 extern uint16_t navEPV;
 extern int16_t navAccNEU[3];
+
+/* Position-controller diagnostics exported for Blackbox logging.  The
+ * navPosCtl* prefix is intentional: these fields describe the horizontal
+ * position loop, not the estimator in general. */
+extern uint8_t navPosCtlRequested;
+extern uint8_t navPosCtlRun;
+extern uint8_t navPosCtlBypass;
+extern uint8_t navPosCtlDataNew;
+extern uint8_t navPosCtlDataConsumed;
+extern uint8_t navPosCtlAdjusting;
+extern uint8_t navPosCtlEstPosStatus;
+extern uint8_t navPosCtlEstVelStatus;
+extern uint8_t navPosCtlEstHeadingStatus;
+extern int32_t navPosCtlEstPosition[3];
+extern int32_t navPosCtlEstVelocity[3];
+extern int16_t navPosCtlEstAttitude[3];
+extern int32_t navPosCtlTargetPosition[3];
+extern uint16_t navPosCtlUpdateDt;
+extern int32_t navPosCtlPosError[2];
+extern int16_t navPosCtlTargetVelocity[2];
+extern int16_t navPosCtlVelocityError[2];
+extern int16_t navPosCtlAcceleration[2];
+extern int16_t navPosCtlAttitude[2];

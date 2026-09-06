@@ -612,6 +612,11 @@ static void updatePositionAccelController_MC(timeDelta_t deltaMicros, float maxA
     const float velErrorX = setpointX - measurementX;
     const float velErrorY = setpointY - measurementY;
 
+    navPosCtlTargetVelocity[X] = constrain(lrintf(setpointX), -32768, 32767);
+    navPosCtlTargetVelocity[Y] = constrain(lrintf(setpointY), -32768, 32767);
+    navPosCtlVelocityError[X] = constrain(lrintf(velErrorX), -32768, 32767);
+    navPosCtlVelocityError[Y] = constrain(lrintf(velErrorY), -32768, 32767);
+
     // Calculate XY-acceleration limit according to velocity error limit
     float accelLimitX, accelLimitY;
     const float velErrorMagnitude = calc_length_pythagorean_2D(velErrorX, velErrorY);
@@ -723,6 +728,9 @@ static void updatePositionAccelController_MC(timeDelta_t deltaMicros, float maxA
     lastAccelTargetX = newAccelX;
     lastAccelTargetY = newAccelY;
 
+    navPosCtlAcceleration[X] = constrain(lrintf(newAccelX), -32768, 32767);
+    navPosCtlAcceleration[Y] = constrain(lrintf(newAccelY), -32768, 32767);
+
     // Rotate acceleration target into forward-right frame (aircraft)
     const float accelForward = newAccelX * posControl.actualState.cosYaw + newAccelY * posControl.actualState.sinYaw;
     const float accelRight = -newAccelX * posControl.actualState.sinYaw + newAccelY * posControl.actualState.cosYaw;
@@ -733,10 +741,15 @@ static void updatePositionAccelController_MC(timeDelta_t deltaMicros, float maxA
 
     posControl.rcAdjustment[ROLL] = constrain(RADIANS_TO_DECIDEGREES(desiredRoll), -maxBankAngle, maxBankAngle);
     posControl.rcAdjustment[PITCH] = constrain(RADIANS_TO_DECIDEGREES(desiredPitch), -maxBankAngle, maxBankAngle);
+
+    navPosCtlAttitude[ROLL] = posControl.rcAdjustment[ROLL];
+    navPosCtlAttitude[PITCH] = posControl.rcAdjustment[PITCH];
 }
 
 static void applyMulticopterPositionController(timeUs_t currentTimeUs)
 {
+    navPosCtlDataNew = posControl.flags.horizontalPositionDataNew;
+
     // Apply controller only if position source is valid. In absence of valid pos sensor (GPS loss), we'd stick in forced ANGLE mode
     // and pilots input would be passed thru to PID controller
     if (posControl.flags.estPosStatus < EST_USABLE) {
@@ -752,13 +765,21 @@ static void applyMulticopterPositionController(timeUs_t currentTimeUs)
                                     navConfig()->general.flags.user_control_mode == NAV_GPS_ATTI &&
                                     posControl.flags.isAdjustingPosition;
 
+    navPosCtlBypass = bypassPositionController;
+
+    const navEstimatedPosVel_t *actualPosition = navGetCurrentActualPositionAndVelocity();
+    navPosCtlPosError[X] = lrintf(posControl.desiredState.pos.x - actualPosition->pos.x);
+    navPosCtlPosError[Y] = lrintf(posControl.desiredState.pos.y - actualPosition->pos.y);
+
     if (posControl.flags.horizontalPositionDataNew) {
         // Indicate that information is no longer usable
         posControl.flags.horizontalPositionDataConsumed = true;
+        navPosCtlDataConsumed = 1;
 
         static timeUs_t previousTimePositionUpdate = 0;     // Occurs @ GPS update rate
         const timeDeltaLarge_t deltaMicrosPositionUpdate = currentTimeUs - previousTimePositionUpdate;
         previousTimePositionUpdate = currentTimeUs;
+        navPosCtlUpdateDt = MIN(deltaMicrosPositionUpdate / 1000U, 65535U);
 
         if (bypassPositionController) {
             return;
@@ -770,6 +791,7 @@ static void applyMulticopterPositionController(timeUs_t currentTimeUs)
             float maxSpeed = getActiveSpeed();
             updatePositionVelocityController_MC(maxSpeed);
             updatePositionAccelController_MC(deltaMicrosPositionUpdate, NAV_ACCELERATION_XY_MAX, maxSpeed);
+            navPosCtlRun = 1;
 
             navDesiredVelocity[X] = constrain(lrintf(posControl.desiredState.vel.x), -32678, 32767);
             navDesiredVelocity[Y] = constrain(lrintf(posControl.desiredState.vel.y), -32678, 32767);
@@ -784,6 +806,9 @@ static void applyMulticopterPositionController(timeUs_t currentTimeUs)
 
     rcCommand[PITCH] = pidAngleToRcCommand(posControl.rcAdjustment[PITCH], pidProfile()->max_angle_inclination[FD_PITCH]);
     rcCommand[ROLL] = pidAngleToRcCommand(posControl.rcAdjustment[ROLL], pidProfile()->max_angle_inclination[FD_ROLL]);
+
+    navPosCtlAttitude[ROLL] = posControl.rcAdjustment[ROLL];
+    navPosCtlAttitude[PITCH] = posControl.rcAdjustment[PITCH];
 }
 
 bool isMulticopterFlying(void)

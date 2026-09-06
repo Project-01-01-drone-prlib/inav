@@ -268,6 +268,28 @@ uint16_t navFlags;
 uint16_t navEPH;
 uint16_t navEPV;
 int16_t navAccNEU[3];
+
+/* Position-controller diagnostics.  These are sampled once per main loop and
+ * copied into the Blackbox main frame. */
+uint8_t navPosCtlRequested;
+uint8_t navPosCtlRun;
+uint8_t navPosCtlBypass;
+uint8_t navPosCtlDataNew;
+uint8_t navPosCtlDataConsumed;
+uint8_t navPosCtlAdjusting;
+uint8_t navPosCtlEstPosStatus;
+uint8_t navPosCtlEstVelStatus;
+uint8_t navPosCtlEstHeadingStatus;
+int32_t navPosCtlEstPosition[3];
+int32_t navPosCtlEstVelocity[3];
+int16_t navPosCtlEstAttitude[3];
+int32_t navPosCtlTargetPosition[3];
+uint16_t navPosCtlUpdateDt;
+int32_t navPosCtlPosError[2];
+int16_t navPosCtlTargetVelocity[2];
+int16_t navPosCtlVelocityError[2];
+int16_t navPosCtlAcceleration[2];
+int16_t navPosCtlAttitude[2];
 //End of blackbox states
 
 static fpVector3_t * rthGetHomeTargetPosition(rthTargetMode_e mode);
@@ -4364,6 +4386,47 @@ void applyWaypointNavigationAndAltitudeHold(void)
 {
     const timeUs_t currentTimeUs = micros();
 
+    /* Update per-frame position-controller diagnostics.  The estimator state
+     * is available at the main-loop rate, while the position controller may
+     * only run when a fresh horizontal-position sample is consumed.  Do not
+     * clear the live setpoint/error fields between controller updates: doing
+     * so produces a pulse train in Blackbox (one non-zero sample followed by
+     * zeros until the next position update). */
+    navPosCtlRequested = 0;
+    navPosCtlRun = 0;
+    navPosCtlBypass = 0;
+    navPosCtlDataNew = posControl.flags.horizontalPositionDataNew;
+    navPosCtlDataConsumed = 0;
+    navPosCtlAdjusting = posControl.flags.isAdjustingPosition;
+    navPosCtlEstPosStatus = posControl.flags.estPosStatus;
+    navPosCtlEstVelStatus = posControl.flags.estVelStatus;
+    navPosCtlEstHeadingStatus = posControl.flags.estHeadingStatus;
+    const navEstimatedPosVel_t *actualPosition = navGetCurrentActualPositionAndVelocity();
+    for (int axis = 0; axis < 3; axis++) {
+        navPosCtlEstPosition[axis] = lrintf(actualPosition->pos.v[axis]);
+        navPosCtlEstVelocity[axis] = lrintf(actualPosition->vel.v[axis]);
+        navPosCtlEstAttitude[axis] = attitude.raw[axis];
+        navPosCtlTargetPosition[axis] = lrintf(posControl.desiredState.pos.v[axis]);
+    }
+    navPosCtlUpdateDt = 0;
+    navPosCtlPosError[X] = lrintf(posControl.desiredState.pos.x - actualPosition->pos.x);
+    navPosCtlPosError[Y] = lrintf(posControl.desiredState.pos.y - actualPosition->pos.y);
+    navPosCtlTargetVelocity[X] = constrain(lrintf(posControl.desiredState.vel.x), -32768, 32767);
+    navPosCtlTargetVelocity[Y] = constrain(lrintf(posControl.desiredState.vel.y), -32768, 32767);
+    navPosCtlVelocityError[X] = constrain(lrintf(posControl.desiredState.vel.x - actualPosition->vel.x), -32768, 32767);
+    navPosCtlVelocityError[Y] = constrain(lrintf(posControl.desiredState.vel.y - actualPosition->vel.y), -32768, 32767);
+    navPosCtlAttitude[ROLL] = posControl.rcAdjustment[ROLL];
+    navPosCtlAttitude[PITCH] = posControl.rcAdjustment[PITCH];
+
+    /* Acceleration is the most recent velocity-controller output.  Keep it
+     * constant between position updates because that is also the output held
+     * by the controller.  Clear it only when position control is unavailable
+     * or the craft is disarmed, where no valid horizontal correction exists. */
+    if (!ARMING_FLAG(ARMED) || posControl.flags.estPosStatus < EST_USABLE) {
+        navPosCtlAcceleration[X] = 0;
+        navPosCtlAcceleration[Y] = 0;
+    }
+
     //Updata blackbox data
     navFlags = 0;
     if (posControl.flags.estAltStatus == EST_TRUSTED)       navFlags |= (1 << 0);
@@ -4406,6 +4469,7 @@ void applyWaypointNavigationAndAltitudeHold(void)
 
     /* Process controllers */
     navigationFSMStateFlags_t navStateFlags = navGetStateFlags(posControl.navState);
+    navPosCtlRequested = (navStateFlags & NAV_CTL_POS) != 0;
     if (STATE(ROVER) || STATE(BOAT)) {
         applyRoverBoatNavigationController(navStateFlags, currentTimeUs);
     } else if (STATE(FIXED_WING_LEGACY)) {
@@ -4430,6 +4494,23 @@ void applyWaypointNavigationAndAltitudeHold(void)
     navTargetPosition[X] = lrintf(posControl.desiredState.pos.x);
     navTargetPosition[Y] = lrintf(posControl.desiredState.pos.y);
     navTargetPosition[Z] = lrintf(posControl.desiredState.pos.z);
+
+    /* Refresh live diagnostics after the controller has run.  This is
+     * important when a new position sample updated desiredState.vel during
+     * this invocation; Blackbox should contain the final setpoint/error for
+     * the current frame, not the value from the previous frame. */
+    const navEstimatedPosVel_t *finalActualPosition = navGetCurrentActualPositionAndVelocity();
+    navPosCtlPosError[X] = lrintf(posControl.desiredState.pos.x - finalActualPosition->pos.x);
+    navPosCtlPosError[Y] = lrintf(posControl.desiredState.pos.y - finalActualPosition->pos.y);
+    navPosCtlTargetVelocity[X] = constrain(lrintf(posControl.desiredState.vel.x), -32768, 32767);
+    navPosCtlTargetVelocity[Y] = constrain(lrintf(posControl.desiredState.vel.y), -32768, 32767);
+    navPosCtlVelocityError[X] = constrain(lrintf(posControl.desiredState.vel.x - finalActualPosition->vel.x), -32768, 32767);
+    navPosCtlVelocityError[Y] = constrain(lrintf(posControl.desiredState.vel.y - finalActualPosition->vel.y), -32768, 32767);
+    navPosCtlAttitude[ROLL] = posControl.rcAdjustment[ROLL];
+    navPosCtlAttitude[PITCH] = posControl.rcAdjustment[PITCH];
+    for (int axis = 0; axis < 3; axis++) {
+        navPosCtlTargetPosition[axis] = lrintf(posControl.desiredState.pos.v[axis]);
+    }
 
     navDesiredHeading = wrap_36000(posControl.desiredState.yaw);
 }
