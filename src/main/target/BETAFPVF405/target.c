@@ -31,7 +31,7 @@ timerHardware_t timerHardware[] = {
     DEF_TIM(TIM8, CH3, PC8, TIM_USE_OUTPUT_AUTO, 0, 0), // M5
     DEF_TIM(TIM1, CH1, PA8, TIM_USE_OUTPUT_AUTO, 0, 0), // M6
 
-    DEF_TIM(TIM4, CH1, PB6, TIM_USE_LED,         0, 0), // LED_STRIP
+    DEF_TIM(TIM4, CH1, PB6, TIM_USE_LED,         0, 0), // LED_STRIP (feature disabled by default)
     DEF_TIM(TIM10, CH1, PB8, TIM_USE_PPM,        0, 0), // PPM / ESC serial
 };
 

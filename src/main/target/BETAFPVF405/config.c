@@ -21,13 +21,6 @@
 #include "platform.h"
 
 #include "fc/config.h"
-#include "io/ledstrip.h"
-
 void targetConfiguration(void)
 {
-    ledStripConfig_t *config = ledStripConfigMutable();
-    ledConfig_t *lc = config->ledConfigs;
-
-    DEFINE_LED(lc, 0, 0, COLOR_RED, 0, LED_FUNCTION_COLOR, LED_FLAG_OVERLAY(LED_OVERLAY_STROBE), 0);
-    DEFINE_LED(lc + 1, 0, 1, COLOR_GREEN, 0, LED_FUNCTION_COLOR, LED_FLAG_OVERLAY(LED_OVERLAY_STROBE), 0);
 }
