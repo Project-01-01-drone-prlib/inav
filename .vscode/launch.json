@@ -16,17 +16,17 @@
             "armToolchainPrefix": "arm-none-eabi",
             "gdbPath": "/usr/bin/gdb-multiarch",
             "showDevDebugOutput": "raw",
-            "preLaunchCommands": [
-                "set pagination off",
-                "set print pretty on",
-                "set mem inaccessible-by-default off",
-                "set breakpoint pending on",
-                "break blackboxStart",
-                "break blackboxDeviceOpen",
-                "break blackboxFinish",
-                "break blackboxUpdate",
-                "break processBlackbox"
-            ]
+            // "preLaunchCommands": [
+            //     "set pagination off",
+            //     "set print pretty on",
+            //     "set mem inaccessible-by-default off",
+            //     "set breakpoint pending on",
+            //     "break blackboxStart",
+            //     "break blackboxDeviceOpen",
+            //     "break blackboxFinish",
+            //     "break blackboxUpdate",
+            //     "break processBlackbox"
+            // ]
         }
     ]
 }
