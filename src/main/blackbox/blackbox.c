@@ -392,6 +392,33 @@ static const blackboxDeltaFieldDefinition_t blackboxMainFields[] = {
     {"navTgtPos",  2, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
     {"navTgtHdg", -1, UNSIGNED, .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
     {"navSurf",   -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+
+    /* Named altitude-controller diagnostics.  The numeric prefix is
+     * intentional: it keeps the fields in a stable, easy-to-follow order in
+     * Blackbox viewers. */
+    {"alt01_targetAltitude", -1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt02_actualAltitude", -1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt03_altitudeError", -1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt04_surfaceMode", -1, UNSIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(UNSIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt05_surfaceStatus", -1, UNSIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(UNSIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt06_rocMode", -1, UNSIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(UNSIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt07_throttleZero", -1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt08_rcThrottle", -1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt09_rcThrottleAdjustment", -1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt10_climbRateDemand", -1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt11_targetClimbRate", -1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt12_actualClimbRate", -1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt13_velocityPidError", -1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt14_velocityPidP", -1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt15_velocityPidI", -1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt16_velocityPidD", -1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt17_velocityPidFF", -1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt18_velocityPidOutput", -1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt19_throttleOutput", -1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt20_surfacePidOutput", -1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt21_altitudeAdjusting", -1, UNSIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(UNSIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt22_altitudePidOutput", -1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+
     {"navAcc",     0, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(AVERAGE_2),     .Pencode = ENCODING(SIGNED_VB), FLIGHT_LOG_FIELD_CONDITION_NAV_ACC},
     {"navAcc",     1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(AVERAGE_2),     .Pencode = ENCODING(SIGNED_VB), FLIGHT_LOG_FIELD_CONDITION_NAV_ACC},
     {"navAcc",     2, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(AVERAGE_2),     .Pencode = ENCODING(SIGNED_VB), FLIGHT_LOG_FIELD_CONDITION_NAV_ACC},
@@ -590,6 +617,7 @@ typedef struct blackboxMainState_s {
     int16_t navHeading;
     uint16_t navTargetHeading;
     int16_t navSurface;
+    int32_t altDebug[NAV_ALT_DEBUG_COUNT];
     uint8_t navPosCtlRequested;
     uint8_t navPosCtlRun;
     uint8_t navPosCtlBypass;
@@ -1105,7 +1133,12 @@ static void writeIntraframe(void)
 
         blackboxWriteSignedVB(blackboxCurrent->navTargetHeading);
         blackboxWriteSignedVB(blackboxCurrent->navSurface);
+    }
 
+    if (testBlackboxCondition(CONDITION(MC_NAV))) {
+        for (int x = 0; x < NAV_ALT_DEBUG_COUNT; x++) {
+            blackboxWriteSignedVB(blackboxCurrent->altDebug[x]);
+        }
     }
 
     if (testBlackboxCondition(FLIGHT_LOG_FIELD_CONDITION_NAV_ACC)) {
@@ -1407,6 +1440,10 @@ static void writeInterframe(void)
 
         blackboxWriteSignedVB(blackboxCurrent->navTargetHeading - blackboxLast->navTargetHeading);
         blackboxWriteSignedVB(blackboxCurrent->navSurface - blackboxLast->navSurface);
+    }
+
+    if (testBlackboxCondition(CONDITION(MC_NAV))) {
+        blackboxWriteArrayUsingAveragePredictor32(offsetof(blackboxMainState_t, altDebug), NAV_ALT_DEBUG_COUNT);
     }
 
     if (testBlackboxCondition(FLIGHT_LOG_FIELD_CONDITION_NAV_ACC)) {
@@ -1904,6 +1941,9 @@ static void loadMainState(timeUs_t currentTimeUs)
     }
     blackboxCurrent->navTargetHeading = navDesiredHeading;
     blackboxCurrent->navSurface = navActualSurface;
+    for (int i = 0; i < NAV_ALT_DEBUG_COUNT; i++) {
+        blackboxCurrent->altDebug[i] = navAltitudeDebug[i];
+    }
     blackboxCurrent->navPosCtlRequested = navPosCtlRequested;
     blackboxCurrent->navPosCtlRun = navPosCtlRun;
     blackboxCurrent->navPosCtlBypass = navPosCtlBypass;

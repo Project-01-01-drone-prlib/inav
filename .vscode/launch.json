@@ -11,6 +11,10 @@
             "serverpath": "${workspaceFolder}/tools/jlink-gdb-server-wsl.sh",
             "device": "STM32F405RG",
             "interface": "swd",
+            "serverArgs": [
+                "-speed",
+                "1000"
+            ],
             "runToEntryPoint": "main",
             "armToolchainPath": "/opt/gcc-arm-none-eabi-9-2020-q2-update/bin",
             "armToolchainPrefix": "arm-none-eabi",

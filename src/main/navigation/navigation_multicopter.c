@@ -74,6 +74,10 @@ static void updateAltHoldRcDebug(int16_t rcThrottleCommand, int16_t deadband, in
     altHoldDebugRcZero = altHoldThrottleRCZero;
     altHoldDebugDeadband = deadband;
     altHoldDebugAdjustment = rcThrottleAdjustment;
+
+    navAltitudeDebug[NAV_ALT_DEBUG_THROTTLE_ZERO] = altHoldThrottleRCZero;
+    navAltitudeDebug[NAV_ALT_DEBUG_RC_THROTTLE] = rcThrottleCommand;
+    navAltitudeDebug[NAV_ALT_DEBUG_RC_THROTTLE_ADJUSTMENT] = rcThrottleAdjustment;
 }
 
 static void publishAltHoldRcDebug(void)
@@ -82,6 +86,12 @@ static void publishAltHoldRcDebug(void)
     DEBUG_SET(DEBUG_ALTITUDE, 5, altHoldDebugRcZero);
     DEBUG_SET(DEBUG_ALTITUDE, 6, altHoldDebugDeadband);
     DEBUG_SET(DEBUG_ALTITUDE, 7, altHoldDebugAdjustment);
+
+    /* Keep these values available to the named altitude Blackbox fields even
+     * while the throttle is inside the deadband. */
+    navAltitudeDebug[NAV_ALT_DEBUG_THROTTLE_ZERO] = altHoldThrottleRCZero;
+    navAltitudeDebug[NAV_ALT_DEBUG_RC_THROTTLE] = rcCommand[THROTTLE];
+    navAltitudeDebug[NAV_ALT_DEBUG_RC_THROTTLE_ADJUSTMENT] = altHoldDebugAdjustment;
 }
 
 float getSqrtControllerVelocity(float targetAltitude, timeDelta_t deltaMicros)

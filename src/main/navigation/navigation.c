@@ -268,6 +268,7 @@ uint16_t navFlags;
 uint16_t navEPH;
 uint16_t navEPV;
 int16_t navAccNEU[3];
+int32_t navAltitudeDebug[NAV_ALT_DEBUG_COUNT];
 
 /* Position-controller diagnostics.  These are sampled once per main loop and
  * copied into the Blackbox main frame. */
@@ -298,6 +299,7 @@ static void resetAltitudeController(bool useTerrainFollowing);
 static void resetPositionController(void);
 static void setupAltitudeController(void);
 static void resetHeadingController(void);
+static void updateAltitudeDebugState(void);
 
 #ifdef USE_FW_AUTOLAND
 static void resetFwAutoland(void);
@@ -4379,6 +4381,31 @@ static void processNavigationRCAdjustments(void)
     posControl.flags.isAdjustingHeading = (navStateFlags & NAV_RC_YAW) && adjustHeadingFromRCInput();
 }
 
+static void updateAltitudeDebugState(void)
+{
+    const navEstimatedPosVel_t *actualPosition = navGetCurrentActualPositionAndVelocity();
+
+    navAltitudeDebug[NAV_ALT_DEBUG_TARGET_ALTITUDE] = lrintf(posControl.desiredState.pos.z);
+    navAltitudeDebug[NAV_ALT_DEBUG_ACTUAL_ALTITUDE] = lrintf(actualPosition->pos.z);
+    navAltitudeDebug[NAV_ALT_DEBUG_ALTITUDE_ERROR] = lrintf(posControl.desiredState.pos.z - actualPosition->pos.z);
+    navAltitudeDebug[NAV_ALT_DEBUG_SURFACE_MODE] = posControl.flags.isTerrainFollowEnabled;
+    navAltitudeDebug[NAV_ALT_DEBUG_SURFACE_STATUS] = posControl.flags.estAglStatus;
+    navAltitudeDebug[NAV_ALT_DEBUG_ROC_MODE] = posControl.flags.rocToAltMode;
+    navAltitudeDebug[NAV_ALT_DEBUG_CLIMB_RATE_DEMAND] = lrintf(posControl.desiredState.climbRateDemand);
+    navAltitudeDebug[NAV_ALT_DEBUG_TARGET_CLIMB_RATE] = lrintf(posControl.desiredState.vel.z);
+    navAltitudeDebug[NAV_ALT_DEBUG_ACTUAL_CLIMB_RATE] = lrintf(actualPosition->vel.z);
+    navAltitudeDebug[NAV_ALT_DEBUG_VEL_PID_ERROR] = lrintf(posControl.desiredState.vel.z - actualPosition->vel.z);
+    navAltitudeDebug[NAV_ALT_DEBUG_VEL_PID_P] = lrintf(posControl.pids.vel[Z].proportional);
+    navAltitudeDebug[NAV_ALT_DEBUG_VEL_PID_I] = lrintf(posControl.pids.vel[Z].integral);
+    navAltitudeDebug[NAV_ALT_DEBUG_VEL_PID_D] = lrintf(posControl.pids.vel[Z].derivative);
+    navAltitudeDebug[NAV_ALT_DEBUG_VEL_PID_FF] = lrintf(posControl.pids.vel[Z].feedForward);
+    navAltitudeDebug[NAV_ALT_DEBUG_VEL_PID_OUTPUT] = lrintf(posControl.pids.vel[Z].output_constrained);
+    navAltitudeDebug[NAV_ALT_DEBUG_THROTTLE_OUTPUT] = rcCommand[THROTTLE];
+    navAltitudeDebug[NAV_ALT_DEBUG_SURFACE_PID_OUTPUT] = lrintf(posControl.pids.surface.output_constrained);
+    navAltitudeDebug[NAV_ALT_DEBUG_ALTITUDE_ADJUSTING] = posControl.flags.isAdjustingAltitude;
+    navAltitudeDebug[NAV_ALT_DEBUG_ALTITUDE_PID_OUTPUT] = lrintf(posControl.pids.pos[Z].output_constrained);
+}
+
 /*-----------------------------------------------------------
  * A main function to call position controllers at loop rate
  *-----------------------------------------------------------*/
@@ -4511,6 +4538,8 @@ void applyWaypointNavigationAndAltitudeHold(void)
     for (int axis = 0; axis < 3; axis++) {
         navPosCtlTargetPosition[axis] = lrintf(posControl.desiredState.pos.v[axis]);
     }
+
+    updateAltitudeDebugState();
 
     navDesiredHeading = wrap_36000(posControl.desiredState.yaw);
 }

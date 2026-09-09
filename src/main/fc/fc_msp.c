@@ -303,6 +303,7 @@ static void serializeSDCardSummaryReply(sbuf_t *dst)
 #ifdef USE_SDCARD
     uint8_t flags = MSP_SDCARD_FLAG_SUPPORTTED;
     uint8_t state;
+    const sdcardMetadata_t *metadata;
 
     sbufWriteU8(dst, flags);
 
@@ -335,7 +336,13 @@ static void serializeSDCardSummaryReply(sbuf_t *dst)
     sbufWriteU8(dst, afatfs_getLastError());
     // Write free space and total space in kilobytes
     sbufWriteU32(dst, afatfs_getContiguousFreeSpace() / 1024);
-    sbufWriteU32(dst, sdcard_getMetadata()->numBlocks / 2); // Block size is half a kilobyte
+
+    // The SD-card backend may not have a metadata object while the card is
+    // absent, is still being initialized, or has failed.  The configurator
+    // requests MSP_SDCARD_SUMMARY while opening the Blackbox page even in
+    // those states, so do not dereference a NULL metadata pointer here.
+    metadata = sdcard_getMetadata();
+    sbufWriteU32(dst, metadata ? metadata->numBlocks / 2 : 0); // Block size is half a kilobyte
 #else
     sbufWriteU8(dst, 0);
     sbufWriteU8(dst, 0);

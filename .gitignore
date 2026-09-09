@@ -23,7 +23,8 @@ cov-int*
 /ninja/
 /obj/
 /patches/
-/tools/
+/tools/*
+!/tools/jlink-gdb-server-wsl.sh
 /downloads/
 /debug/
 /release/

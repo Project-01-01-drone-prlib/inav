@@ -697,6 +697,35 @@ typedef struct {
     float agl;
 } navPositionAndVelocity_t;
 
+/* Altitude-controller diagnostics exported for Blackbox.  Values are stored
+ * in the controller's native units (cm, cm/s, PWM us, or PID output units)
+ * and are named alt01_... through alt21_... in the Blackbox header. */
+enum {
+    NAV_ALT_DEBUG_TARGET_ALTITUDE = 0,
+    NAV_ALT_DEBUG_ACTUAL_ALTITUDE,
+    NAV_ALT_DEBUG_ALTITUDE_ERROR,
+    NAV_ALT_DEBUG_SURFACE_MODE,
+    NAV_ALT_DEBUG_SURFACE_STATUS,
+    NAV_ALT_DEBUG_ROC_MODE,
+    NAV_ALT_DEBUG_THROTTLE_ZERO,
+    NAV_ALT_DEBUG_RC_THROTTLE,
+    NAV_ALT_DEBUG_RC_THROTTLE_ADJUSTMENT,
+    NAV_ALT_DEBUG_CLIMB_RATE_DEMAND,
+    NAV_ALT_DEBUG_TARGET_CLIMB_RATE,
+    NAV_ALT_DEBUG_ACTUAL_CLIMB_RATE,
+    NAV_ALT_DEBUG_VEL_PID_ERROR,
+    NAV_ALT_DEBUG_VEL_PID_P,
+    NAV_ALT_DEBUG_VEL_PID_I,
+    NAV_ALT_DEBUG_VEL_PID_D,
+    NAV_ALT_DEBUG_VEL_PID_FF,
+    NAV_ALT_DEBUG_VEL_PID_OUTPUT,
+    NAV_ALT_DEBUG_THROTTLE_OUTPUT,
+    NAV_ALT_DEBUG_SURFACE_PID_OUTPUT,
+    NAV_ALT_DEBUG_ALTITUDE_ADJUSTING,
+    NAV_ALT_DEBUG_ALTITUDE_PID_OUTPUT,
+    NAV_ALT_DEBUG_COUNT
+};
+
 float getEstimatedActualVelocity(int axis);
 float getEstimatedActualPosition(int axis);
 uint32_t getTotalTravelDistance(void);
@@ -843,6 +872,8 @@ extern uint16_t navFlags;
 extern uint16_t navEPH;
 extern uint16_t navEPV;
 extern int16_t navAccNEU[3];
+
+extern int32_t navAltitudeDebug[NAV_ALT_DEBUG_COUNT];
 
 /* Position-controller diagnostics exported for Blackbox logging.  The
  * navPosCtl* prefix is intentional: these fields describe the horizontal
