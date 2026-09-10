@@ -290,6 +290,7 @@ int16_t navPosCtlTargetVelocity[2];
 int16_t navPosCtlVelocityError[2];
 int16_t navPosCtlAcceleration[2];
 int16_t navPosCtlAttitude[2];
+int32_t navAltCtl[NAV_ALT_CTL_COUNT];
 //End of blackbox states
 
 static fpVector3_t * rthGetHomeTargetPosition(rthTargetMode_e mode);
@@ -4511,6 +4512,24 @@ void applyWaypointNavigationAndAltitudeHold(void)
     for (int axis = 0; axis < 3; axis++) {
         navPosCtlTargetPosition[axis] = lrintf(posControl.desiredState.pos.v[axis]);
     }
+
+    navAltCtl[NAV_ALT_CTL_TARGET_POS] = lrintf(posControl.desiredState.pos.z);
+    navAltCtl[NAV_ALT_CTL_CURRENT_POS] = lrintf(finalActualPosition->pos.z);
+    navAltCtl[NAV_ALT_CTL_TARGET_VEL] = lrintf(posControl.desiredState.vel.z);
+    navAltCtl[NAV_ALT_CTL_CURRENT_VEL] = lrintf(finalActualPosition->vel.z);
+    navAltCtl[NAV_ALT_CTL_POS_OUT] = lrintf(posControl.pids.pos[Z].output_constrained);
+    navAltCtl[NAV_ALT_CTL_VEL_P] = lrintf(posControl.pids.vel[Z].proportional);
+    navAltCtl[NAV_ALT_CTL_VEL_I] = lrintf(posControl.pids.vel[Z].integral);
+    navAltCtl[NAV_ALT_CTL_VEL_D] = lrintf(posControl.pids.vel[Z].derivative);
+    navAltCtl[NAV_ALT_CTL_VEL_FF] = lrintf(posControl.pids.vel[Z].feedForward);
+    navAltCtl[NAV_ALT_CTL_VEL_OUT] = lrintf(posControl.pids.vel[Z].output_constrained);
+    navAltCtl[NAV_ALT_CTL_THROTTLE] = rcCommand[THROTTLE];
+    navAltCtl[NAV_ALT_CTL_ALT_STATUS] = posControl.flags.estAltStatus;
+    navAltCtl[NAV_ALT_CTL_AGL_STATUS] = posControl.flags.estAglStatus;
+    navAltCtl[NAV_ALT_CTL_TERRAIN_FOLLOW] = posControl.flags.isTerrainFollowEnabled;
+    navAltCtl[NAV_ALT_CTL_ROC_MODE] = posControl.flags.rocToAltMode;
+    navAltCtl[NAV_ALT_CTL_CLIMB_RATE_DEMAND] = lrintf(posControl.desiredState.climbRateDemand);
+    navAltCtl[NAV_ALT_CTL_ADJUSTING_ALTITUDE] = posControl.flags.isAdjustingAltitude;
 
     navDesiredHeading = wrap_36000(posControl.desiredState.yaw);
 }

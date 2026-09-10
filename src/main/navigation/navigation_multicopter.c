@@ -74,6 +74,11 @@ static void updateAltHoldRcDebug(int16_t rcThrottleCommand, int16_t deadband, in
     altHoldDebugRcZero = altHoldThrottleRCZero;
     altHoldDebugDeadband = deadband;
     altHoldDebugAdjustment = rcThrottleAdjustment;
+
+    navAltCtl[NAV_ALT_CTL_THROTTLE_ZERO] = altHoldThrottleRCZero;
+    navAltCtl[NAV_ALT_CTL_RC_THROTTLE] = rcThrottleCommand;
+    navAltCtl[NAV_ALT_CTL_RC_ADJUST] = rcThrottleAdjustment;
+    navAltCtl[NAV_ALT_CTL_DEADBAND] = deadband;
 }
 
 static void publishAltHoldRcDebug(void)
@@ -165,6 +170,9 @@ bool adjustMulticopterAltitudeFromRCInput(void)
         }
         else {
             int16_t climbRate = -50;
+            const uint8_t deadband = rcControlsConfig()->alt_hold_deadband;
+            const int16_t rcThrottleAdjustment = applyDeadband(rcCommand[THROTTLE] - altHoldThrottleRCZero, deadband);
+            updateAltHoldRcDebug(rcCommand[THROTTLE], deadband, rcThrottleAdjustment);
 
             // Increase descent rate when throttle stick below mid from min rate of 0.5m/s up to max 2 m/s
             if (posControl.flags.estAglStatus != EST_TRUSTED) {
@@ -224,6 +232,8 @@ void setupMulticopterAltitudeController(void)
     altHoldThrottleRCZero = constrain(altHoldThrottleRCZero,
                                       getThrottleIdleValue() + rcControlsConfig()->alt_hold_deadband + 10,
                                       getMaxThrottle() - rcControlsConfig()->alt_hold_deadband - 10);
+
+    navAltCtl[NAV_ALT_CTL_THROTTLE_ZERO] = altHoldThrottleRCZero;
 
     // Force AH controller to initialize althold integral for pending takeoff on reset
     // Signal for that is low throttle _and_ low actual altitude

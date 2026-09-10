@@ -866,3 +866,32 @@ extern int16_t navPosCtlTargetVelocity[2];
 extern int16_t navPosCtlVelocityError[2];
 extern int16_t navPosCtlAcceleration[2];
 extern int16_t navPosCtlAttitude[2];
+
+/* Altitude-controller diagnostics exported for Blackbox logging. Values are
+ * sampled once per main loop. In SURFACE mode positions/velocities are AGL. */
+typedef enum {
+    NAV_ALT_CTL_TARGET_POS = 0,
+    NAV_ALT_CTL_CURRENT_POS,
+    NAV_ALT_CTL_TARGET_VEL,
+    NAV_ALT_CTL_CURRENT_VEL,
+    NAV_ALT_CTL_POS_OUT,
+    NAV_ALT_CTL_VEL_P,
+    NAV_ALT_CTL_VEL_I,
+    NAV_ALT_CTL_VEL_D,
+    NAV_ALT_CTL_VEL_FF,
+    NAV_ALT_CTL_VEL_OUT,
+    NAV_ALT_CTL_THROTTLE,
+    NAV_ALT_CTL_THROTTLE_ZERO,
+    NAV_ALT_CTL_RC_THROTTLE,
+    NAV_ALT_CTL_RC_ADJUST,
+    NAV_ALT_CTL_DEADBAND,
+    NAV_ALT_CTL_ALT_STATUS,
+    NAV_ALT_CTL_AGL_STATUS,
+    NAV_ALT_CTL_TERRAIN_FOLLOW,
+    NAV_ALT_CTL_ROC_MODE,
+    NAV_ALT_CTL_CLIMB_RATE_DEMAND,
+    NAV_ALT_CTL_ADJUSTING_ALTITUDE,
+    NAV_ALT_CTL_COUNT
+} navAltCtlField_e;
+
+extern int32_t navAltCtl[NAV_ALT_CTL_COUNT];

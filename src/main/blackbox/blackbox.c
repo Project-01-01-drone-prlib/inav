@@ -447,6 +447,30 @@ static const blackboxDeltaFieldDefinition_t blackboxMainFields[] = {
 
     {"gg_navPosCtlAtt",        0, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
     {"gg_navPosCtlAtt",        1, SIGNED, .Ipredict = PREDICT(0), .Iencode = ENCODING(SIGNED_VB), .Ppredict = PREDICT(PREVIOUS), .Pencode = ENCODING(SIGNED_VB), FLIGHT_LOG_FIELD_CONDITION_NAV_POS},
+
+    /* Multicopter altitude-controller diagnostics (Z axis). In SURFACE mode
+     * target/current are AGL. Keep explicit field names so Blackbox viewers
+     * show the meaning directly instead of an array index. */
+    {"alt_pos_target",             -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt_pos_current",            -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt_vel_target",         -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt_vel_current",        -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt_pos_pid_out",            -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt_vel_p",              -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt_vel_i",              -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt_vel_d",              -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt_vel_out",            -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt_throttle",           -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt_throttle_zero",      -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt_rc_throttle",        -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt_rc_adjust",          -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt_deadband",           -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt_flag_est_alt_status",     -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt_flag_est_agl_status",     -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt_flag_terrain_follow",     -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt_roc_mode",           -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt_climb_rate_demand",  -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
+    {"alt_flag_adjusting_altitude", -1, SIGNED,   .Ipredict = PREDICT(0),       .Iencode = ENCODING(SIGNED_VB),   .Ppredict = PREDICT(PREVIOUS),      .Pencode = ENCODING(SIGNED_VB), CONDITION(MC_NAV)},
 };
 
 #ifdef USE_GPS
@@ -609,6 +633,7 @@ typedef struct blackboxMainState_s {
     int16_t navPosCtlVelocityError[2];
     int16_t navPosCtlAcceleration[2];
     int16_t navPosCtlAttitude[2];
+    int32_t navAltCtl[NAV_ALT_CTL_COUNT];
 } blackboxMainState_t;
 
 typedef struct blackboxGpsState_s {
@@ -1157,6 +1182,30 @@ static void writeIntraframe(void)
         }
     }
 
+    /* Altitude-controller diagnostics. Field order must match the alt_* definitions above. */
+    if (testBlackboxCondition(FLIGHT_LOG_FIELD_CONDITION_MC_NAV)) {
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_TARGET_POS]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_CURRENT_POS]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_TARGET_VEL]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_CURRENT_VEL]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_POS_OUT]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_VEL_P]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_VEL_I]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_VEL_D]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_VEL_OUT]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_THROTTLE]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_THROTTLE_ZERO]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_RC_THROTTLE]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_RC_ADJUST]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_DEADBAND]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_ALT_STATUS]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_AGL_STATUS]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_TERRAIN_FOLLOW]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_ROC_MODE]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_CLIMB_RATE_DEMAND]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_ADJUSTING_ALTITUDE]);
+    }
+
     //Rotate our history buffers:
 
     //The current state becomes the new "before" state
@@ -1455,6 +1504,30 @@ static void writeInterframe(void)
         for (int x = 0; x < 2; x++) {
             blackboxWriteSignedVB(blackboxCurrent->navPosCtlAttitude[x] - blackboxLast->navPosCtlAttitude[x]);
         }
+    }
+
+    /* Altitude-controller diagnostics. Field order must match the alt_* definitions above. */
+    if (testBlackboxCondition(FLIGHT_LOG_FIELD_CONDITION_MC_NAV)) {
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_TARGET_POS] - blackboxLast->navAltCtl[NAV_ALT_CTL_TARGET_POS]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_CURRENT_POS] - blackboxLast->navAltCtl[NAV_ALT_CTL_CURRENT_POS]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_TARGET_VEL] - blackboxLast->navAltCtl[NAV_ALT_CTL_TARGET_VEL]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_CURRENT_VEL] - blackboxLast->navAltCtl[NAV_ALT_CTL_CURRENT_VEL]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_POS_OUT] - blackboxLast->navAltCtl[NAV_ALT_CTL_POS_OUT]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_VEL_P] - blackboxLast->navAltCtl[NAV_ALT_CTL_VEL_P]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_VEL_I] - blackboxLast->navAltCtl[NAV_ALT_CTL_VEL_I]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_VEL_D] - blackboxLast->navAltCtl[NAV_ALT_CTL_VEL_D]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_VEL_OUT] - blackboxLast->navAltCtl[NAV_ALT_CTL_VEL_OUT]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_THROTTLE] - blackboxLast->navAltCtl[NAV_ALT_CTL_THROTTLE]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_THROTTLE_ZERO] - blackboxLast->navAltCtl[NAV_ALT_CTL_THROTTLE_ZERO]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_RC_THROTTLE] - blackboxLast->navAltCtl[NAV_ALT_CTL_RC_THROTTLE]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_RC_ADJUST] - blackboxLast->navAltCtl[NAV_ALT_CTL_RC_ADJUST]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_DEADBAND] - blackboxLast->navAltCtl[NAV_ALT_CTL_DEADBAND]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_ALT_STATUS] - blackboxLast->navAltCtl[NAV_ALT_CTL_ALT_STATUS]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_AGL_STATUS] - blackboxLast->navAltCtl[NAV_ALT_CTL_AGL_STATUS]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_TERRAIN_FOLLOW] - blackboxLast->navAltCtl[NAV_ALT_CTL_TERRAIN_FOLLOW]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_ROC_MODE] - blackboxLast->navAltCtl[NAV_ALT_CTL_ROC_MODE]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_CLIMB_RATE_DEMAND] - blackboxLast->navAltCtl[NAV_ALT_CTL_CLIMB_RATE_DEMAND]);
+        blackboxWriteSignedVB(blackboxCurrent->navAltCtl[NAV_ALT_CTL_ADJUSTING_ALTITUDE] - blackboxLast->navAltCtl[NAV_ALT_CTL_ADJUSTING_ALTITUDE]);
     }
 
     //Rotate our history buffers
@@ -1926,6 +1999,9 @@ static void loadMainState(timeUs_t currentTimeUs)
         blackboxCurrent->navPosCtlVelocityError[i] = navPosCtlVelocityError[i];
         blackboxCurrent->navPosCtlAcceleration[i] = navPosCtlAcceleration[i];
         blackboxCurrent->navPosCtlAttitude[i] = navPosCtlAttitude[i];
+    }
+    for (int i = 0; i < NAV_ALT_CTL_COUNT; i++) {
+        blackboxCurrent->navAltCtl[i] = navAltCtl[i];
     }
 }
 
